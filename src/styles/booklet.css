@@ -1,0 +1,536 @@
+/* ===========================
+   ОБОЛОЧКА РЕДАКТОРА
+   =========================== */
+.editor-shell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* ===========================
+   ПАНЕЛЬ ИНСТРУМЕНТОВ
+   =========================== */
+.toolbar {
+    position: sticky;
+    top: 16px;
+    z-index: 50;
+    width: 100%;
+    max-width: 920px;
+    margin-bottom: 12px;
+}
+
+.toolbar-inner {
+    background: var(--bg-card);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(80, 40, 20, 0.08);
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-wrap: wrap;
+}
+
+.tb-btn {
+    width: 38px;
+    height: 38px;
+    border: none;
+    background: transparent;
+    border-radius: 10px;
+    color: var(--text-main);
+    font-family: var(--font-ui);
+    font-size: 0.95rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+}
+.tb-btn:hover {
+    background: var(--accent-light);
+    color: var(--accent-primary);
+}
+.tb-btn.active {
+    background: var(--accent-primary);
+    color: #fff;
+}
+.tb-btn sub { font-size: 0.65em; }
+
+.tb-sep {
+    width: 1px;
+    height: 24px;
+    background: rgba(0, 0, 0, 0.08);
+    margin: 0 4px;
+}
+
+.tb-spacer { flex: 1; }
+
+.tb-action {
+    border: none;
+    border-radius: 10px;
+    padding: 9px 18px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    font-family: var(--font-ui);
+    transition: all 0.2s;
+    letter-spacing: 0.3px;
+}
+.tb-clear {
+    background: transparent;
+    color: var(--text-muted);
+}
+.tb-clear:hover {
+    background: #f5e8e8;
+    color: var(--accent-primary);
+}
+.tb-export {
+    background: var(--accent-primary);
+    color: #fff;
+}
+.tb-export:hover:not(:disabled) {
+    background: var(--accent-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(128, 37, 37, 0.3);
+}
+.tb-export:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+.status-bar {
+    width: 100%;
+    max-width: 920px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 8px;
+    margin-bottom: 12px;
+}
+.saved-indicator {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-family: var(--font-ui);
+    opacity: 0.7;
+}
+
+/* ===========================
+   ЛИСТ A4 (БУМАГА)
+   =========================== */
+.paper-stage {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.paper {
+    width: 210mm;
+    min-height: 297mm;
+    background: var(--paper);
+    box-shadow:
+        0 1px 2px rgba(80, 40, 20, 0.06),
+        0 12px 40px var(--paper-shadow),
+        0 30px 80px rgba(80, 40, 20, 0.08);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Декоративный «отпечаток» страницы */
+.paper::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(ellipse at top left, rgba(184, 146, 74, 0.04), transparent 50%),
+        radial-gradient(ellipse at bottom right, rgba(128, 37, 37, 0.03), transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* ===========================
+   КОНТЕНТ БУКЛЕТА
+   =========================== */
+.booklet-content {
+    position: relative;
+    z-index: 1;
+    padding: 28mm 24mm;
+    font-family: var(--font-body);
+    font-size: 11.5pt;
+    line-height: 1.75;
+    color: var(--ink);
+    outline: none;
+    min-height: calc(297mm - 0px);
+}
+
+.booklet-content:focus { outline: none; }
+
+/* Плейсхолдер */
+.booklet-content p.is-editor-empty:first-child::before {
+    content: attr(data-placeholder);
+    float: left;
+    color: rgba(92, 74, 64, 0.4);
+    pointer-events: none;
+    height: 0;
+    font-style: italic;
+}
+
+/* Параграф */
+.booklet-content p {
+    margin: 0 0 0.9em;
+    text-align: justify;
+    hyphens: auto;
+}
+
+/* Заголовки */
+.booklet-content h1 {
+    font-family: var(--font-head);
+    font-weight: 600;
+    font-size: 42pt;
+    line-height: 1;
+    color: var(--accent-primary);
+    text-align: center;
+    margin: 0 0 0.3em;
+    letter-spacing: 0.5px;
+}
+
+.booklet-content h2 {
+    font-family: var(--font-head);
+    font-weight: 500;
+    font-size: 22pt;
+    line-height: 1.2;
+    color: var(--ink);
+    margin: 1.6em 0 0.5em;
+    text-align: center;
+    position: relative;
+    padding-bottom: 0.4em;
+}
+.booklet-content h2::after {
+    content: '❦';
+    display: block;
+    font-size: 14pt;
+    color: var(--gold);
+    margin-top: 8px;
+    font-weight: 400;
+}
+.booklet-content h2:first-child { margin-top: 0; }
+
+/* Курсив, жирный */
+.booklet-content strong { color: var(--ink); font-weight: 700; }
+.booklet-content em {
+    font-family: var(--font-head);
+    font-style: italic;
+    font-size: 1.05em;
+    color: var(--ink-soft);
+}
+
+/* Цитата */
+.booklet-content blockquote {
+    margin: 1.8em 2em;
+    padding: 1.2em 1.5em;
+    border: none;
+    position: relative;
+    text-align: center;
+    font-family: var(--font-head);
+    font-style: italic;
+    font-size: 14pt;
+    line-height: 1.5;
+    color: var(--accent-primary);
+}
+.booklet-content blockquote::before,
+.booklet-content blockquote::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+.booklet-content blockquote::before { top: 0; }
+.booklet-content blockquote::after { bottom: 0; }
+.booklet-content blockquote p {
+    margin: 0;
+    text-align: center;
+}
+.booklet-content blockquote p::before { content: '“'; color: var(--gold); font-size: 1.2em; margin-right: 0.1em; }
+.booklet-content blockquote p::after { content: '”'; color: var(--gold); font-size: 1.2em; margin-left: 0.1em; }
+
+/* Списки */
+.booklet-content ul,
+.booklet-content ol {
+    margin: 1em 0 1.4em;
+    padding-left: 1.4em;
+}
+.booklet-content ul { list-style: none; padding-left: 1.6em; }
+.booklet-content ul li {
+    position: relative;
+    margin-bottom: 0.5em;
+    text-align: left;
+}
+.booklet-content ul li::before {
+    content: '❧';
+    position: absolute;
+    left: -1.4em;
+    top: 0;
+    color: var(--gold);
+    font-size: 0.95em;
+}
+.booklet-content ol li { margin-bottom: 0.5em; }
+
+/* Картинки */
+.booklet-content .booklet-image,
+.booklet-content img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 1.5em auto;
+    border-radius: 2px;
+    box-shadow:
+        0 1px 3px rgba(80, 40, 20, 0.15),
+        0 8px 24px rgba(80, 40, 20, 0.1);
+}
+
+/* ===========================
+   ДЕКОРАТИВНЫЙ РАЗДЕЛИТЕЛЬ — ЛОГО
+   =========================== */
+.booklet-content hr,
+.booklet-content .ornament {
+    border: none;
+    height: 48px;
+    margin: 2.2em auto;
+    background: none;
+    position: relative;
+    text-align: center;
+    overflow: visible;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.booklet-content hr::before,
+.booklet-content .ornament::before {
+    content: '';
+    display: block;
+    width: 44px;
+    height: 44px;
+    background-image: url('/opera-booklet/logo.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    background-color: var(--paper);
+    padding: 0 14px;
+    position: relative;
+    z-index: 1;
+    opacity: 0.9;
+}
+.booklet-content hr::after,
+.booklet-content .ornament::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 12%;
+    right: 12%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(184, 146, 74, 0.5), transparent);
+}
+
+/* Разрыв страницы */
+.booklet-content .page-break {
+    display: block;
+    height: 24px;
+    margin: 12px 0;
+    border-top: 1px dashed rgba(128, 37, 37, 0.35);
+    border-bottom: 1px dashed rgba(128, 37, 37, 0.35);
+    position: relative;
+    background: repeating-linear-gradient(
+        90deg,
+        transparent 0,
+        transparent 8px,
+        rgba(128, 37, 37, 0.06) 8px,
+        rgba(128, 37, 37, 0.06) 16px
+    );
+}
+.booklet-content .page-break::after {
+    content: 'разрыв страницы';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--paper);
+    padding: 0 12px;
+    font-family: var(--font-ui);
+    font-size: 9pt;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: rgba(128, 37, 37, 0.55);
+}
+.booklet-content .page-break.ProseMirror-selectednode {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 2px;
+}
+
+/* ===========================
+   ОБЛОЖКА (первый блок)
+   =========================== */
+.booklet-content [data-cover="true"] {
+    min-height: 240mm;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    position: relative;
+    padding: 40px 20px;
+}
+.booklet-content [data-cover="true"]::before {
+    content: '';
+    position: absolute;
+    top: 30px;
+    left: 30px;
+    right: 30px;
+    bottom: 30px;
+    border: 1px solid var(--gold);
+    pointer-events: none;
+    opacity: 0.5;
+}
+.booklet-content [data-cover="true"]::after {
+    content: '';
+    position: absolute;
+    top: 36px;
+    left: 36px;
+    right: 36px;
+    bottom: 36px;
+    border: 1px solid var(--accent-primary);
+    pointer-events: none;
+    opacity: 0.25;
+}
+.booklet-content [data-cover="true"] h1 {
+    font-size: 56pt;
+    color: var(--accent-primary);
+    margin-bottom: 0.4em;
+    font-style: italic;
+}
+.booklet-content [data-cover="true"] h1::before {
+    content: '';
+    display: block;
+    width: 90px;
+    height: 90px;
+    margin: 0 auto 28px;
+    background-image: url('/opera-booklet/logo.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    opacity: 0.9;
+}
+.booklet-content [data-cover="true"] h1::after {
+    content: '';
+    display: block;
+    width: 80px;
+    height: 1px;
+    background: var(--gold);
+    margin: 24px auto 0;
+}
+.booklet-content [data-cover="true"] .cover-meta,
+.booklet-content [data-cover="true"] p {
+    font-family: var(--font-head);
+    font-size: 14pt;
+    font-style: italic;
+    color: var(--ink-soft);
+    letter-spacing: 1px;
+}
+
+/* ===========================
+   РЕЖИМ ЭКСПОРТА В PDF
+   =========================== */
+.export-mode {
+    box-shadow: none !important;
+}
+.export-mode::before { display: none !important; }
+
+.export-mode .page-break {
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    background: none !important;
+    page-break-before: always;
+    break-before: page;
+}
+.export-mode .page-break::after { display: none !important; }
+
+.export-mode .booklet-content {
+    padding: 24mm 22mm;
+}
+
+/* В экспорте обложка ровно на страницу */
+.export-mode [data-cover="true"] {
+    page-break-after: always;
+    break-after: page;
+    min-height: 250mm;
+}
+
+/* Не разрывать важные элементы между страницами */
+.export-mode h1,
+.export-mode h2,
+.export-mode blockquote,
+.export-mode img {
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+.export-mode h1,
+.export-mode h2 {
+    page-break-after: avoid;
+    break-after: avoid;
+}
+
+/* ===========================
+   АДАПТИВ
+   =========================== */
+@media (max-width: 1100px) {
+    .paper {
+        transform: scale(0.85);
+        transform-origin: top center;
+        margin-bottom: -45mm;
+    }
+}
+
+@media (max-width: 900px) {
+    .paper {
+        transform: scale(0.7);
+        margin-bottom: -90mm;
+    }
+    .toolbar-inner {
+        gap: 2px;
+        padding: 6px;
+    }
+    .tb-btn { width: 34px; height: 34px; font-size: 0.85rem; }
+    .tb-action { padding: 8px 14px; font-size: 0.8rem; }
+}
+
+@media (max-width: 640px) {
+    .paper {
+        transform: scale(0.45);
+        margin-bottom: -160mm;
+    }
+    .tb-spacer { flex-basis: 100%; height: 0; }
+    .tb-action { flex: 1; }
+    .editor-shell::before {
+        content: '⚠ Редактор оптимизирован для работы с компьютера';
+        display: block;
+        background: var(--accent-light);
+        color: var(--accent-primary);
+        padding: 12px 16px;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        text-align: center;
+        margin-bottom: 16px;
+        font-family: var(--font-ui);
+        font-weight: 500;
+    }
+}
+
+/* ===========================
+   PROSEMIRROR ВНУТРЕННЕЕ
+   =========================== */
+.ProseMirror { outline: none; min-height: 100%; }
+.ProseMirror-focused { outline: none; }
+.ProseMirror ::selection {
+    background: rgba(128, 37, 37, 0.15);
+}

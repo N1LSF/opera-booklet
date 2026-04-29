@@ -1,0 +1,61 @@
+---
+const { title = 'Редактор буклета' } = Astro.props;
+---
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>{title}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+</head>
+<body>
+    <slot />
+</body>
+</html>
+
+<style is:global>
+    :root {
+        /* Цвета сайта */
+        --bg-body: #F7F7F9;
+        --bg-card: #FFFFFF;
+        --text-main: #1D1D1F;
+        --text-muted: #6E6E73;
+        --accent-primary: #802525;
+        --accent-dark: #601818;
+        --accent-light: #FDF2F2;
+
+        /* Цвета буклета (тёплая бумага) */
+        --paper: #FBF6EC;
+        --paper-shadow: rgba(80, 40, 20, 0.12);
+        --ink: #2A1F1A;
+        --ink-soft: #5C4A40;
+        --gold: #B8924A;
+
+        --radius-lg: 24px;
+        --radius-sm: 12px;
+
+        --font-head: 'Cormorant Garamond', 'Merriweather', serif;
+        --font-body: 'Merriweather', serif;
+        --font-ui: 'Inter', sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; min-height: 100vh; }
+    body {
+        background: var(--bg-body);
+        color: var(--text-main);
+        font-family: var(--font-ui);
+        line-height: 1.6;
+    }
+    button { font-family: inherit; cursor: pointer; }
+
+    /* Скроллбар */
+    html { scrollbar-width: thin; scrollbar-color: var(--accent-primary) transparent; }
+    html::-webkit-scrollbar { width: 6px; }
+    html::-webkit-scrollbar-track { background: transparent; }
+    html::-webkit-scrollbar-thumb { background: var(--accent-primary); border-radius: 10px; }
+</style>
